@@ -1,13 +1,13 @@
 CREATE TABLE "Roles"
 (
 	"Id" SERIAL NOT NULL PRIMARY KEY,
-	"RoleName" CHAR NOT NULL,
+	"RoleName" CHAR NOT NULL
 );
 
 CREATE TABLE "HorseStables"
 (
 	"Id" SERIAL NOT NULL PRIMARY KEY,
-	"Number" INTEGER NOT NULL CHECK("HorseStables" > 0),
+	"Number" INTEGER NOT NULL CHECK("Number" > 0)
 );
 
 CREATE TABLE "Owners"
@@ -16,7 +16,7 @@ CREATE TABLE "Owners"
 	"Name" CHAR(50) NOT NULL,
 	"Surname" CHAR(50) NOT NULL,
 	"Email" CHAR NOT NULL CHECK("Email" LIKE'%@%.%') UNIQUE,
-	"Phone" CHAR(17) NOT NULL CHECK("Phone" SIMILAR TO '\+38\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}') UNIQUE,
+	"Phone" CHAR(17) NOT NULL CHECK("Phone" SIMILAR TO '\+38\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}') UNIQUE
 );
 
 CREATE TABLE "Horses"
@@ -24,16 +24,16 @@ CREATE TABLE "Horses"
 	"Id" SERIAL NOT NULL PRIMARY KEY,
 	"Nickname" CHAR(50) NOT NULL,
 	"OwnerId" INTEGER NOT NULL,
-	FOREIGN KEY ("OwnerId") REFERENCES "Owner"("Id")
+	FOREIGN KEY ("OwnerId") REFERENCES "Owners"("Id")
 );
 
 CREATE TABLE "StablesOccupancy"
 (
 	"Id" SERIAL NOT NULL PRIMARY KEY,
-	"Day" DATA NOT NULL DEFAULT localdata,
+	"Day" DATE NOT NULL DEFAULT current_date,
 	"HorseId" INTEGER NOT NULL,
 	"StableId" INTEGER NOT NULL,
-	FOREIGN KEY ("HorseId") REFERENCES "Owner"("Id"),
+	FOREIGN KEY ("HorseId") REFERENCES "Owners"("Id"),
 	FOREIGN KEY ("StableId") REFERENCES "HorseStables"("Id")
 );
 
@@ -41,25 +41,25 @@ CREATE TABLE "Plans"
 (
   	"Id" SERIAL PRIMARY KEY,
   	"Amount" SMALLINT NOT NULL CHECK("Amount" > 0),
-  	"Discount" SMALLINT NOT NULL CHECK("Discount" > 0),
+  	"Discount" SMALLINT NOT NULL CHECK("Discount" > 0)
 );
 
 CREATE TABLE "Disciplines"
 (
   	"Id" SERIAL PRIMARY KEY,
   	"Name" CHAR(50) NOT NULL,
-	"Price" MONEY NOT NULL CHECK("Price" > 0),
+	"Price" INTEGER NOT NULL CHECK("Price" > 0)
 );
 
 CREATE TABLE "Subscriptions"
 (
   	"Id" SERIAL PRIMARY KEY,
   	"Name" CHAR(50) NOT NULL,
-  	"LessonPlanId" INTEGER REFERENCES Plans("Id"),
-  	"DisciplinesId" INTEGER REFERENCES Disciplines("Id")
+  	"LessonPlanId" INTEGER REFERENCES "Plans"("Id"),
+  	"DisciplinesId" INTEGER REFERENCES "Disciplines"("Id")
 );
 
-CREATE TABLE "Client"
+CREATE TABLE "Clients"
 (
   	"Id" SERIAL PRIMARY KEY,
   	"Name" CHAR(50) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE "Client"
   	"Email" VARCHAR NOT NULL CHECK("Email" LIKE'%@%.%') UNIQUE,
     	"Phone" CHAR(17) NOT NULL CHECK("Phone" SIMILAR TO '\+38\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}') UNIQUE,
     	"Password_hash" VARCHAR NOT NULL,
-	"RoleId" INTEGER REFERENCES Roles("Id")
+	"RoleId" INTEGER REFERENCES "Roles"("Id")
 );
 
 CREATE TABLE "Trainers"
@@ -78,25 +78,25 @@ CREATE TABLE "Trainers"
   	"Email" CHAR NOT NULL CHECK("Email" LIKE'%@%.%') UNIQUE,
   	"Phone" CHAR(17) NOT NULL CHECK("Phone" SIMILAR TO '\+38\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}') UNIQUE,
 	"Password_hash" VARCHAR NOT NULL,
-  	"RoleId" INTEGER REFERENCES Roles("Id")
+  	"RoleId" INTEGER REFERENCES "Roles"("Id")
 );
 
 CREATE TABLE "ClientSubscriptions"
 (
   	"Id" SERIAL PRIMARY KEY,
   	"PurchaseDate" DATE NOT NULL,
-  	"SubscriptionId" INTEGER REFERENCES Subscriptions("Id"),
-  	"ClientId" INTEGER REFERENCES Clients("Id"),
+  	"SubscriptionId" INTEGER REFERENCES "Subscriptions"("Id"),
+  	"ClientId" INTEGER REFERENCES "Clients"("Id"),
   	"AvailableLessons" SMALLINT NOT NULL DEFAULT 0 CHECK("AvailableLessons" > -1)
 );
 
 CREATE TABLE "Schedule"
 (
   	"Id" SERIAL PRIMARY KEY,
-  	"ClientSubId" INTEGER REFERENCES ClientSubscription("Id"),
-  	"TrainerId" INTEGER REFERENCES Trainer("Id"),
-  	"HorseId" INTEGER REFERENCES Horses("Id"),
-  	"Date" DATA NOT NULL,
+  	"ClientSubId" INTEGER REFERENCES "ClientSubscriptions"("Id"),
+  	"TrainerId" INTEGER REFERENCES "Trainers"("Id"),
+  	"HorseId" INTEGER REFERENCES "Horses"("Id"),
+  	"Date" DATE NOT NULL,
   	"BeginTime" TIMESTAMP NOT NULL,
   	"EndTime" TIMESTAMP NOT NULL
 );
