@@ -10,7 +10,8 @@ CREATE TABLE "HorseStables"
 	"Number" INTEGER NOT NULL CHECK("HorseStables" > 0),
 );
 
-CREATE TABLE "Owners"(
+CREATE TABLE "Owners"
+(
 	"Id" SERIAL NOT NULL PRIMARY KEY,
 	"Name" CHAR(50) NOT NULL,
 	"Surname" CHAR(50) NOT NULL,
@@ -105,6 +106,6 @@ CREATE TABLE "Photos"
   	"Id" SERIAL PRIMARY KEY,
   	"Name" CHAR NOT NULL,
 	"Link" CHAR NOT NULL,
-	"HorseId" INTEGER NOT NULL
+	"HorseId" INTEGER NOT NULL,
 	FOREIGN KEY ("HorseId") REFERENCES "Horses"("Id")
 );
